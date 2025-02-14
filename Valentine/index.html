@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siêu Valentine 12/4</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 90%;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        h1 {
+            font-size: 32px;
+            color: yellow;
+            text-shadow: 2px 2px 10px red;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .yes {
+            background-color: #4CAF50;
+            font-size: 22px;
+            color: white;
+        }
+        .no, .sure, .confirm {
+            background-color: #FF3B3F;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        #fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworks"></canvas>
+    <div class="container">
+        <h1 id="question">Em có yêu anh không? 💖</h1>
+        <div class="buttons" id="main-buttons">
+            <button class="yes" onclick="showLove()">Yes 💘</button>
+            <button class="no" onclick="askAgain()">No 😭</button>
+        </div>
+        <div id="secondary-question" class="hidden">
+            <h1>Em chắc chưa? 🤔</h1>
+            <button class="confirm" onclick="finalChoice()">Chắc rồi 😤</button>
+        </div>
+    </div>
+    <script>
+        let noClickCount = 0;
+        function askAgain() {
+            document.getElementById("main-buttons").classList.add("hidden");
+            document.getElementById("secondary-question").classList.remove("hidden");
+        }
+        function finalChoice() {
+            alert("Mời chọn lại! 💞");
+            document.getElementById("secondary-question").classList.add("hidden");
+            document.querySelector(".yes").style.fontSize = "50px";
+            document.getElementById("main-buttons").innerHTML = '<button class="yes" onclick="showLove()">Yes 💘</button>';
+            document.getElementById("main-buttons").classList.remove("hidden");
+        }
+        function showLove() {
+            document.querySelector(".container").innerHTML = "<h1>I Love Na ❤️🎆🎇</h1>";
+            startFireworks();
+        }
+        function startFireworks() {
+            const canvas = document.getElementById("fireworks");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+            function Particle(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 5;
+                this.vy = Math.random() * -5;
+                this.alpha = 1;
+                this.color = color;
+            }
+            Particle.prototype.update = function() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.02;
+            };
+            function createExplosion(x, y) {
+                const colors = ["red", "yellow", "pink", "orange"];
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]));
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.update();
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                });
+                requestAnimationFrame(animate);
+            }
+            setInterval(() => createExplosion(Math.random() * canvas.width, Math.random() * canvas.height), 500);
+            animate();
+        }
+    </script>
+</body>
+</html>
